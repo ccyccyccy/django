@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ post.title|capfirst }} - {{ block.super }}
+{% endblock %}
+
+{% block content %} 
+
+<div class="content">
+	<div class="section-inner clearfix">
+		{% include "blog/post_single.html" %}
+	</div>
+</div>
+
+{% endblock %}

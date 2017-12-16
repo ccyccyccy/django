@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+	Blogg - {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="content">
+	<div class="section-inner clearfix">
+		{% include "blog/post_next_previous.html" %}
+		{% for post in posts %}
+			{% include "blog/post_single.html" %}
+		{% empty %}
+			<p>There is no post</p>
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}

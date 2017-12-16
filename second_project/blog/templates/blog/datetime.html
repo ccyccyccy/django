@@ -1,18 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Current Time</title>
-	</head>
-	<body>
-		{% include 'blog/nav.html' %}
-		{% if now %}
-			<p>Current date and time is {{ now }}</p>
-		{% else %}
-			<p>now variable is not avaliable</p>
-		{% endif %}
+{% extends "base.html" %}
 
-		<p>Current scheme: {{ request.scheme }}</p>
-	</body>
-</html>
+{% block title %}
+Title from datetime.html
+{% endblock %}
+
+{% block content %}
+
+	{% if now %}
+		<p>Current time and date is {{ now }}</p>
+	{% else %}
+		<p>now variable is not avaliable</p>
+	{% endif %}
+	
+	<p>Current scheme: {{ request.scheme }}</p>
+	<p>BASE_DIR : {{ base_dir }}</p>
+
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<p>All rights reserved</p>
+{% endblock %}
