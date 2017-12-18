@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404, redirec
 from django.core.mail import mail_admins
 from django.http import HttpResponse
 from django.contrib import messages, auth
+from django.contrib.auth.models import User
 from .models import Author, Category, Tag, Post
 from .forms import FeedbackForm
 from second_project.helpers import pg_records
@@ -38,7 +39,7 @@ def post_by_tag(request, tag_slug):
 
 
 def post_by_author(request, author_name):
-	author = get_object_or_404(Author, name=author_name)
+	author = get_object_or_404(Author, user__username=author_name)
 	posts = get_list_or_404(Post, author=author)
 	context = {'author': author, 'posts': posts}
 	return render(request, 'blog/post_by_author.html', context)

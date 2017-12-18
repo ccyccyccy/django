@@ -56,12 +56,14 @@ class PostForm(forms.ModelForm):
 
 	class Meta:
 		model = Post
-		fields = ('title', 'content', 'author', 'category', 'tags',)
+		fields = ('title', 'content', 'category', 'tags',)
+
+	# author is not recognised as part of Post field, need to add in manually in views
+	author = forms.ModelChoiceField(queryset=Author.objects.all(), required=False)
 
 	def clean_title(self):
 		n = self.cleaned_data['title']
 		if n.lower() in ('post', 'add', 'update'):
-			print('lala')
 			raise ValidationError("Post's title cannot be %s" % n)
 		return n
 

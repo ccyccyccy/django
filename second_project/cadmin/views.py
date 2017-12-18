@@ -12,14 +12,38 @@ from blog.models import Post, Author
 from .forms import CustomUserCreationForm
 
 
+@login_required
 def post_add(request):
 	#If request is POST, create a bound forms
 	if request.method == 'POST':
 		f = PostForm(request.POST)
 
 		if f.is_valid():
-			f.save()
+			if request.POST.get('author') == '' and request.user.is_superuser:
+				new_post = f.save(commit=False)
+				author = Author.objects.get(user__username='staff')
+				new_post.author = author
+				new_post.save()
+				f.save_m2m()
+
+			elif request.POST.get('author') and request.user.is_superuser:				
+				new_post = f.save(commit=False)
+				author = f.cleaned_data['author']
+				new_post.author = author
+				new_post.save()
+				f.save_m2m()
+		
+			else:
+				new_post = f.save(commit=False)
+				new_post.author = Author.objects.get(user__username=request.user.username)
+				new_post.save()
+				f.save_m2m()
+
+			messages.add_message(request, messages.INFO, 'Post added')
 			return redirect('post_add')
+
+		else:
+			print(f.errors)
 
 	#if form is valid, save data to database, redirect back to post_add view
 	
@@ -29,6 +53,7 @@ def post_add(request):
 	return render(request, 'cadmin/post_add.html', {'form': f})
 
 
+@login_required
 def post_update(request, pk):
 	post = get_object_or_404(Post, pk=pk)
 
@@ -36,8 +61,24 @@ def post_update(request, pk):
 		f = PostForm(request.POST, instance=post)
 
 		if f.is_valid():
-			f.save()
-			return redirect(post)
+			if request.POST.get('author') == '' and request.user.is_superuser:
+				updated_post = f.save()
+
+			elif request.POST.get('author') and request.user.is_superuser:				
+				updated_post = f.save(commit=False)
+				author = f.cleaned_data['author']
+				updated_post.author = author
+				updated_post.save()
+				f.save_m2m()
+		
+			else:
+				updated_post = f.save(commit=False)
+				updated_post.author = Author.objects.get(user__username=request.user.username)
+				updated_post.save()
+				f.save_m2m()
+
+			messages.add_message(request, messages.INFO, 'Post updated')
+			return redirect('post_update', pk=pk)
 
 	#If request is GET, prepopulate with current post data
 	else:
@@ -100,7 +141,7 @@ def register(request):
 
 
 def activate_account(request):
-	key = request.GET['key']
+	key = request.GET.get('key', False)
 	if not key:
 		raise Http404()
 	author = get_object_or_404(Author, activation_key = key, email_validated=False)

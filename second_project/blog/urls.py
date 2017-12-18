@@ -1,6 +1,12 @@
 from django.conf.urls import url
 from django.contrib.flatpages import views as flat_views
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import PostSitemap
 from blog import views
+
+sitemaps = {
+	'posts': PostSitemap
+}
 
 urlpatterns = [
 	url(r'^category/(?P<category_slug>[\w-]+)/$', views.post_by_category, name='post_by_category'),
@@ -14,4 +20,5 @@ urlpatterns = [
 	url(r'^admin-page/$', views.admin_page, name='admin_page'),	
 	url(r'^about/$', flat_views.flatpage, {'url': '/about/'}, name='about'),
 	url(r'^eula/$', flat_views.flatpage, {'url': '/eula/'}, name='eula'),
+	url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
 ]
