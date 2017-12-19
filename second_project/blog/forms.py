@@ -21,7 +21,7 @@ class AuthorForm(forms.ModelForm):
 
 
 class TagForm(forms.ModelForm):
-
+	author = forms.ModelChoiceField(queryset=Author.objects.all(), required=False)
 	class Meta:
 		model = Tag
 		fields = '__all__'
@@ -37,29 +37,27 @@ class TagForm(forms.ModelForm):
 
 
 class CategoryForm(forms.ModelForm):
-
+	author = forms.ModelChoiceField(queryset=Author.objects.all(), required=False)
 	class Meta:
 		model = Category
 		fields = '__all__'
 
 	def clean_name(self):
-		n = cleaned_data['category']
+		n = self.cleaned_data['name']
 		if n.lower() in ('tag', 'add', 'update'):
 			raise ValidationError("Category name cannot be %s" % n)
 		return n
 
 	def clean_slug(self):
-		return cleaned_data['slug'].lower()
+		return self.cleaned_data['slug'].lower()
 
 
 class PostForm(forms.ModelForm):
-
+	author = forms.ModelChoiceField(queryset=Author.objects.all(), required=False)
 	class Meta:
 		model = Post
-		fields = ('title', 'content', 'category', 'tags',)
+		fields = ('title', 'content', 'author', 'category', 'tags',)
 
-	# author is not recognised as part of Post field, need to add in manually in views
-	author = forms.ModelChoiceField(queryset=Author.objects.all(), required=False)
 
 	def clean_title(self):
 		n = self.cleaned_data['title']
