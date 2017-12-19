@@ -4,4 +4,4 @@
 <p class="post-info">
 	{% include "blog/post_info.html" %}
 </p>
-<p>{{ post.content }}</p>
+<p>{{ post.content|safe }}</p>

@@ -312,6 +312,7 @@ def register(request):
 					email=request.POST['email'],
 					password=request.POST['password1'],
 					is_active=0,
+					is_staff=True,
 				)
 
 				author = Author()
